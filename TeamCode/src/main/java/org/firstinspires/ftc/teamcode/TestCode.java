@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -20,6 +21,12 @@ public class TestCode extends LinearOpMode {
     private DcMotor rf_motor = null;
     private DcMotor lb_motor = null;
     private DcMotor rb_motor = null;
+    private DcMotor manipulator1 = null;
+    private Servo fred;
+    // fred is wrist, girlypop is manipulator
+    private Servo GirlyPop;
+
+
 
     //defining imu variable
     IMU imu = null;
@@ -44,12 +51,17 @@ public class TestCode extends LinearOpMode {
         rf_motor = hardwareMap.get(DcMotor.class, "rf_motor");
         lb_motor = hardwareMap.get(DcMotor.class, "lb_motor");
         rb_motor = hardwareMap.get(DcMotor.class, "rb_motor");
+        manipulator1 = hardwareMap.get(DcMotor.class, "manipulator1");
+
+        GirlyPop = hardwareMap.get(Servo.class, "girlypop");
+        fred = hardwareMap.get(Servo.class, "fred");
 
         //configuring motors so they move in the right direction
         lf_motor.setDirection(DcMotorSimple.Direction.FORWARD);
         rf_motor.setDirection(DcMotorSimple.Direction.REVERSE);
         lb_motor.setDirection(DcMotorSimple.Direction.FORWARD);
         rb_motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        manipulator1.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //attaching imu to variable and getting the gyroscope set up
         imu = hardwareMap.get(IMU.class,"imu");
@@ -105,6 +117,28 @@ public class TestCode extends LinearOpMode {
             rf_motor.setPower(sineMove + sinePivot);
             rb_motor.setPower(cosineMove + cosinePivot);
             lb_motor.setPower(sineMove - sinePivot);
+
+            if (gamepad1.a) {
+                manipulator1.setPower(0.25);
+            } else if (gamepad1.b) {
+                manipulator1.setPower(-0.25);
+            } else {
+                manipulator1.setPower(0);
+            }
+            if (gamepad1.x) {
+                GirlyPop.setPosition(0.15);
+            }
+            if (gamepad1.y) {
+                GirlyPop.setPosition(0.1);
+            }
+            if (gamepad2.x) {
+                fred.setPosition(0.3);
+            }
+            if (gamepad2.y) {
+                fred.setPosition(-0.2);
+            }
+            telemetry.addData("girlypop pos", GirlyPop.getPosition());
+            telemetry.update();
 
         }
     }
